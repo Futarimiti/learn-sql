@@ -2,6 +2,8 @@
 
 ### Syntax
 
+#### Create new table
+
 Use `CREATE TABLE` command to create a new table
 giving descriptions including table name, fields name and their types.
 
@@ -44,6 +46,47 @@ CREATE TABLE
 		`image` blob,
 		`type` varchar(100)
 	);
+```
+
+#### Create from a template table
+
+It is possible to create a table as a duplicate of another table.
+
+This speeds up creation of a table if there is already one with similar syntax.
+
+The following `CREATE AS` clause duplicates table `EMP`:
+
+```sql
+CREATE TABLE `EMP2` AS (SELECT * FROM `EMP`);
+```
+
+This is frequently used as to back up a table.
+
+It is also possible to include part of the columns:
+
+```sql
+CREATE TABLE
+	`EMP2`
+AS
+(
+	SELECT
+		`EMPNO`, `ENAME`
+	FROM
+		`EMP`
+	WHERE
+		JOB = 'MANAGER'
+);
+```
+
+```sql
+mysql> SELECT * FROM `EMP2`;
++-------+-------+
+| EMPNO | ENAME |
++-------+-------+
+| 7566  | JONES |
+| 7698  | BLAKE |
+| 7782  | CLARK |
++-------+-------+
 ```
 
 ### Naming convention
