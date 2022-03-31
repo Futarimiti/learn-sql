@@ -174,6 +174,115 @@ mysql> SELECT * FROM `t_user`;
 ```
 <!-- @continue format -->
 
+#### Foreign key (FK)
+
+Imagine we are going to process a school system into DBMS, where each student has a `no(PK)`, `name` and is in a class,
+where each class has a `class_name` and a `class_no`.
+
+If we approach to put everything in one table, such as:
+
+| no  | name   | class\_no      | class\_name |
+|-----|--------|----------------|-------------|
+| 1   | Jack   | 100            | B1          |
+| 2   | Lucy   | 100            | B1          |
+| 3   | Emily  | 101            | B2          |
+| 4   | Emma   | 101            | B2          |
+
+Which is a bad design as `class_no` and `class_name` redundantly appear in the table, causing needless memory waste.
+
+Another approach is to use two tables, `t_student` and `t_class`:
+
+`t_student`:
+
+| no       | name       | class\_no |
+|----------|------------|-----------|
+| 1        | Jack       | 100       |
+| 2        | Lucy       | 100       |
+| 3        | Emily      | 101       |
+| 4        | Emma       | 101       |
+
+`t_class`:
+
+| class\_no       | class\_name |
+|-----------------|-------------|
+| 100             | B1          |
+| 101             | B2          |
+
+Much better. One more thing to make sure: `class_no` in `t_student` must be from `t_class`, otherwise invalid `class_no`
+may be used.
+
+This can be done with foreign constraint, and here we are going to apply that on `t_student.class\_no`. That is
+saying: `t_student.class\_no` is a foreign field and its values must be foreign.
+
+##### Foreign tables creating/dropping order
+
+Here as we constrain a foreign key, the table `t_class` becomes parental to `t_student`. This restrains orders when
+manipulating these tables:
+
+* `t_class` must be created **prior** to `t_student`;
+* `t_class` must be `DROP`ed **after** `t_student`, and vice versa for `DELETE` or `TRUNCATE`;
+* When updating class-related records, `t_class` must be updated **prior** to `t_student`.
+
+##### Syntax
+
+Having that in mind, we can now create `t_class` and `t_student`.
+
+A foreign key is defined using `FOREIGN KEY ... REFERENCES ...` syntax:
+
+```sql
+CREATE TABLE `t_class`
+(
+	`class_no`   int PRIMARY KEY,
+	`class_name` varchar(225)
+);
+
+CREATE TABLE `t_student`
+(
+	`no`       int PRIMARY KEY AUTO_INCREMENT,
+	`name`     varchar(225),
+	`class_no` int,
+	FOREIGN KEY (`class_no`) REFERENCES `t_class` (`class_no`)
+);
+```
+
+We herein define `t_student.class_no` as a foreign field of `t_class.class_no`. Now we can fill records in `t_class`
+and `t_student`. Pay attention to the execution order:
+
+```sql
+INSERT INTO
+	`t_class` (`class_no`, `class_name`)
+VALUES
+	(100, 'B1'),
+	(101, 'B2');
+
+INSERT INTO
+	`t_student` (`name`, `class_no`)
+VALUES
+	('Jack', 100),
+	('Lucy', 100),
+	('Emily', 101),
+	('Emma', 101);
+```
+
+And we're done. It is illegal to use a `class_no` not included in `t_class`, and an error will be thrown:
+<!-- @keep format -->
+```sql
+mysql> INSERT INTO `t_student` (`name`, `class_no`) VALUES ('Jack', 200);
+(1452, 'Cannot add or update a child row: a foreign key constraint fails (`bjpowernode`.`t_student`, CONSTRAINT `t_student_ibfk_1` FOREIGN KEY (`class_no`) REFERENCES `t_class` (`class_no`))')
+```
+<!-- @continue format -->
+
+Note that this does not mean two tables are joined, but only constrained possible values of `t_student.class_no`
+to `t_class.class_no`.
+
+###### Notes
+
+* A foreign key must reference a `UNIQUE` field. <!-- This includes `PRIMARY KEY`. -->
+  This is designed to avoid ambiguous query results when joining tables.
+	> If B1 and B2 both take 100 for `class_no`, then which `class_name` should be shown up for Jack when joining `t_student` and `t_class`?
+
+* Foreign keys are nullable as long as `UNIQUE` condition is met.
+
 ### Create from a template table
 
 It is possible to create a table as a duplicate of another table.
