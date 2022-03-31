@@ -1,8 +1,8 @@
 # Creating a table
 
-### Syntax
+## Syntax
 
-#### Create new table
+### Create new table
 
 Use `CREATE TABLE` command to create a new table
 giving descriptions including table name, fields name and their types.
@@ -22,7 +22,7 @@ CREATE TABLE
 
 Note that no trailing commas are allowed.
 
-Extra restraints may be added to a field, such as primary key and non-nullability:
+Extra [constraints](#constraints) may be added to a field, such as primary key and non-nullability:
 
 ```sql
 ...
@@ -48,7 +48,139 @@ CREATE TABLE
 	);
 ```
 
-#### Create from a template table
+#### Constraints
+
+Constraints on fields guarantee validity of values.
+
+Common constraints in MySQL:
+
+| Constraint    | Meaning             		   |
+| ------------- | ---------------------------- |
+| `NOT NULL`    | Non-nullable        		   |
+| `UNIQUE`      | No repeating non-null values |
+| `PRIMARY KEY` | Primary key   	  		   |
+| `FOREIGN KEY` | Foreign key   	  		   |
+
+The constraints may be put right behind particular field as a **field-level** constraint,
+or associated with multiple fields as a **table-level** constraint (see `UNIQUE` example below).
+
+##### `UNIQUE` on multiple fields
+
+Suppose we have the following table:
+
+```sql
+CREATE TABLE
+	t_user
+	(
+		`id` int,
+		`name` varchar(225),
+		`email` varchar(225)
+	);
+```
+
+The demand is to treat records with `name` and `email` **both** being the same as duplicates.
+That is saying, inserting `('Jack', 'mail1')` and `('Jack', 'mail2')` should not be conflicting.
+
+Here we are trying to restrain `UNIQUE` on the union of fields `name` and `email`.
+To achieve this, we can use `UNIQUE` as in the following syntax:
+
+```sql
+CREATE TABLE
+	t_user
+	(
+		`id` int,
+		`name` varchar(225),
+		`email` varchar(225),
+		UNIQUE (`name`, `email`)
+	);
+```
+
+Here the `UNIQUE` constraint does not follow any field and is at table-level.
+
+##### Primary key (PK)
+
+Primary key is the **unique** id of every record.
+
+Every legal table must include *one and only one* primary key.
+
+A primary key should be `NOT NULL` + `UNIQUE`.
+In MySQL, a `NOT NULL` `UNIQUE` field is automatically considered as primary key.
+
+Constraint `PRIMARY KEY` can be at both field- and table-level.
+A **composite** primary key is possible, but not recommended in actual development:
+
+```sql
+CREATE TABLE
+	t_user
+	(
+		`id` int,
+		`name` varchar(225),
+		`email` varchar(225),
+		PRIMARY KEY (`id`, `name`)
+	);
+```
+
+Note that we are still having only *one* primary key.
+A table should always contain one and only one primary key.
+
+Primary keys are commonly of type `int`, `bigint` or `char`.
+`varchar` is not recommended as primary key values are often fixed-length numbers.
+
+###### Natural & surrogate primary key
+
+Depending on its nature, a primary key could be either natural or surrogate.
+
+A surrogate primary key is completely irrelevant to the current business,
+such as serial numbers 1, 2, 3...
+
+A natural primary key is selected from the current business, such as card number and ID number
+that appears to be unique on different records.
+
+Comparatively surrogate primary key is more extensively used in the business.
+This is because primary keys should be sought to be distinct and does not have to be meaningful.
+Natual primary keys highly depends on the current business,
+which could be easily affected by changes brought to the business;
+for example, a licence plate number or card number may be subject to changes.
+
+###### Auto primary key
+
+Using `AUTO_INCREMENT` automatically generates surrogate primary key values from 1:
+
+```sql
+CREATE TABLE
+	t_user
+	(
+		`id` int PRIMARY KEY AUTO_INCREMENT,
+		`name` varchar(225),
+		`email` varchar(225)
+	);
+```
+
+Inserting records requires `id` entry no more:
+
+```sql
+INSERT INTO
+	`t_user` (`name`, `email`)
+VALUES
+	('Jack', 'jack@mil.com'),
+	('Emily', 'emm@pmail.com'),
+	('Emma', 'fucme@616.com');
+```
+
+`id` is automatically generated as:
+
+```sql
+mysql> SELECT * FROM `t_user`;
++----+-------+---------------+
+| id | name  | email         |
++----+-------+---------------+
+| 1  | Jack  | jack@mil.com  |
+| 2  | Emily | emm@pmail.com |
+| 3  | Emma  | fucme@616.com |
++----+-------+---------------+
+```
+
+### Create from a template table
 
 It is possible to create a table as a duplicate of another table.
 
