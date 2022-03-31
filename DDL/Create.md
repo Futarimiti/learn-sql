@@ -10,11 +10,11 @@ Bracket the table desc after the table name.
 
 <!-- @keep format -->
 ```sql
-CREATE TABLE table_name
+CREATE TABLE `table_name`
 (
-	field_1 type_1,
-	field_2 type_2,
-	field_3 type_3,
+	`field_1` type_1,
+	`field_2` type_2,
+	`field_3` type_3,
 	...
 );
 ```
@@ -35,7 +35,7 @@ playtime `playtime`, length `time`, poster `image`, type `type`
 for each movie:
 
 ```sql
-CREATE TABLE t_movie
+CREATE TABLE `t_movie`
 (
 	`no`       bigint NOT NULL PRIMARY KEY,
 	`name`     varchar(255),
@@ -68,7 +68,7 @@ fields as a **table-level** constraint (see `UNIQUE` example below).
 Suppose we have the following table:
 
 ```sql
-CREATE TABLE t_user
+CREATE TABLE `t_user`
 (
 	`id`    int,
 	`name`  varchar(225),
@@ -83,7 +83,7 @@ Here we are trying to restrain `UNIQUE` on the union of fields `name` and `email
 as in the following syntax:
 
 ```sql
-CREATE TABLE t_user
+CREATE TABLE `t_user`
 (
 	`id`    int,
 	`name`  varchar(225),
@@ -107,7 +107,7 @@ Constraint `PRIMARY KEY` can be at both field- and table-level. A **composite** 
 recommended in actual development:
 
 ```sql
-CREATE TABLE t_user
+CREATE TABLE `t_user`
 (
 	`id`    int,
 	`name`  varchar(225),
@@ -140,7 +140,7 @@ may be subject to change.
 Using `AUTO_INCREMENT` automatically generates surrogate primary key values from 1:
 
 ```sql
-CREATE TABLE t_user
+CREATE TABLE `t_user`
 (
 	`id`    int PRIMARY KEY AUTO_INCREMENT,
 	`name`  varchar(225),
@@ -206,7 +206,7 @@ AS
 	FROM
 		`EMP`
 	WHERE
-		JOB = 'MANAGER';
+		`JOB` = 'MANAGER';
 ```
 
 <!-- @keep format -->
