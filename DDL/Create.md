@@ -349,3 +349,19 @@ Table names and field names belong to identifiers.
 A table name usually starts with `t_` or `tbl_` to enhance readability.
 
 All these identifiers should be in **fully\_lowercase\_snake\_case**; their names should represent their meanings.
+
+### Create options
+
+When creating the table, some creating options may be specified.
+These commonly include `ENGINE` and `DEFAULT CHARSET`.
+
+To set these options, append them at the end of the `CREATE` clause,
+right after the fields bracket:
+
+```sql
+CREATE TABLE `new_table`
+(
+	`id` int PRIMARY KEY AUTO_INCREMENT,
+	`name` varchar(225) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=gbk; -- 允许中文输入
+```
