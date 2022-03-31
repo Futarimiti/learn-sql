@@ -9,6 +9,7 @@ Use `CREATE TABLE` command to create a new table giving descriptions including t
 Bracket the table desc after the table name.
 
 <!-- @keep format -->
+
 ```sql
 CREATE TABLE `table_name`
 (
@@ -18,6 +19,7 @@ CREATE TABLE `table_name`
 	...
 );
 ```
+
 <!-- @continue format -->
 
 Note that no trailing commas are allowed.
@@ -25,9 +27,11 @@ Note that no trailing commas are allowed.
 Extra [constraints](#constraints) may be added to a field, such as primary key and non-nullability:
 
 <!-- @keep format -->
+
 ```sql
 ID int NOT NULL PRIMARY KEY,
 ```
+
 <!-- @continue format -->
 
 If we'd like to create a table of records of movies `t_movie`, including number `no`, name `name`, description `desc`,
@@ -162,6 +166,7 @@ VALUES
 `id` is automatically generated as:
 
 <!-- @keep format -->
+
 ```sql
 mysql> SELECT * FROM `t_user`;
 +----+-------+---------------+
@@ -172,6 +177,7 @@ mysql> SELECT * FROM `t_user`;
 | 3  | Emma  | fucme@616.com |
 +----+-------+---------------+
 ```
+
 <!-- @continue format -->
 
 #### Foreign key (FK)
@@ -219,9 +225,9 @@ saying: `t_student.class\_no` is a foreign field and its values must be foreign.
 Here as we constrain a foreign key, the table `t_class` becomes parental to `t_student`. This restrains orders when
 manipulating these tables:
 
-* `t_class` must be created **prior** to `t_student`;
-* `t_class` must be `DROP`ed **after** `t_student`, and vice versa for `DELETE` or `TRUNCATE`;
-* When updating class-related records, `t_class` must be updated **prior** to `t_student`.
+*   `t_class` must be created **prior** to `t_student`;
+*   `t_class` must be `DROP`ed **after** `t_student`, and vice versa for `DELETE` or `TRUNCATE`;
+*   When updating class-related records, `t_class` must be updated **prior** to `t_student`.
 
 ##### Syntax
 
@@ -265,11 +271,14 @@ VALUES
 ```
 
 And we're done. It is illegal to use a `class_no` not included in `t_class`, and an error will be thrown:
+
 <!-- @keep format -->
+
 ```sql
 mysql> INSERT INTO `t_student` (`name`, `class_no`) VALUES ('Jack', 200);
 (1452, 'Cannot add or update a child row: a foreign key constraint fails (`bjpowernode`.`t_student`, CONSTRAINT `t_student_ibfk_1` FOREIGN KEY (`class_no`) REFERENCES `t_class` (`class_no`))')
 ```
+
 <!-- @continue format -->
 
 Note that this does not mean two tables are joined, but only constrained possible values of `t_student.class_no`
@@ -277,11 +286,11 @@ to `t_class.class_no`.
 
 ###### Notes
 
-* A foreign key must reference a `UNIQUE` field. <!-- This includes `PRIMARY KEY`. -->
-  This is designed to avoid ambiguous query results when joining tables.
-	> If B1 and B2 both take 100 for `class_no`, then which `class_name` should be shown up for Jack when joining `t_student` and `t_class`?
+*   A foreign key must reference a `UNIQUE` field. <!-- This includes `PRIMARY KEY`. -->
+    This is designed to avoid ambiguous query results when joining tables.
+    > If B1 and B2 both take 100 for `class_no`, then which `class_name` should be shown up for Jack when joining `t_student` and `t_class`?
 
-* Foreign keys are nullable as long as `UNIQUE` condition is met.
+*   Foreign keys are nullable as long as `UNIQUE` condition is met.
 
 ### Create from a template table
 
@@ -319,6 +328,7 @@ AS
 ```
 
 <!-- @keep format -->
+
 ```sql
 mysql> SELECT * FROM `EMP2`;
 +-------+-------+
@@ -329,6 +339,7 @@ mysql> SELECT * FROM `EMP2`;
 | 7782  | CLARK |
 +-------+-------+
 ```
+
 <!-- @continue format -->
 
 ### Naming convention
