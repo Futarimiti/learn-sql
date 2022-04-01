@@ -8,18 +8,18 @@ The default storage engine for MySQL is InnoDB.
 This can be inspected using `SHOW CREATE TABLE table_name` command.
 It should return something like:
 
-    +-----------+-----------------------------------------------------------------------------------------------+
-    | Table     | Create Table                                                                                  |
-    +-----------+-----------------------------------------------------------------------------------------------+
-    | t_student | CREATE TABLE `t_student` (                                                                    |
-    |		|	`no` int NOT NULL AUTO_INCREMENT,                                                       |
-    |		|	`name` varchar(225) DEFAULT NULL,                                                       |
-    |		|	`class_no` int DEFAULT NULL,                                                            |
-    |		|	PRIMARY KEY (`no`),                                                                     |
-    |		|	KEY `class_no` (`class_no`),                                                            |
-    |		|	CONSTRAINT `t_student_ibfk_1` FOREIGN KEY (`class_no`) REFERENCES `t_class` (`class_no`)|
-    |		|) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci 		| 
-    +-----------+-----------------------------------------------------------------------------------------------+
+	+-----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+	| Table     | Create Table                                                                                                                                                                                                                                                                                                                                                          |
+	+-----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+	| t_student | CREATE TABLE `t_student` (
+	  `no` int NOT NULL AUTO_INCREMENT,
+	  `name` varchar(225) DEFAULT NULL,
+	  `class_no` int DEFAULT NULL,
+	  PRIMARY KEY (`no`),
+	  KEY `class_no` (`class_no`),
+	  CONSTRAINT `t_student_ibfk_1` FOREIGN KEY (`class_no`) REFERENCES `t_class` (`class_no`)
+	) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
+	+-----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Where the `ENGINE` gives the storage engine in use for this table.
 Some other information such as `DEFAULT CHARSET` are also available here.
