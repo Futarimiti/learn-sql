@@ -28,6 +28,19 @@ mysql> SELECT 1 = NULL, 3 > NULL, NULL <> 10, NULL = NULL, NULL <> NULL;
 
 To check if a value is `NULL`, use postfix operater `IS NULL`.
 
+### In math and string operations
+
+Using `NULL` in scalar math operations and string concatenations always results in `NULL`.
+
+```sql
+mysql> SELECT 1 + NULL AS 'MATH', 'JOE' + NULL AS 'STRCAT';
++--------+--------+
+| MATH   | STRCAT |
++--------+--------+
+| <null> | <null> |
++--------+--------+
+```
+
 ### Three-valued logic (3VL)
 
 3VL is an logic system implemented by SQL to handle logic operations involving `NULL`.
