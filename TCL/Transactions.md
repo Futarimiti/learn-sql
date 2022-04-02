@@ -2,7 +2,9 @@
 
 Transaction is five-star concept in DBMS and must be fully mastered.
 
-### Prerequisite terminologies
+### Concept
+
+In short, a transaction is a complete business logic.
 
 ##### Business logic
 
@@ -11,17 +13,12 @@ A part of a program that demonstrates the real-world business rules that determi
 It is contrasted with the remainder of the software, which might be concerned with lower-level details of managing a database,
 or displaying the user interface, system infrastructure, or generally connecting various parts of the program.
 
-For instance, the complete business logic behind a cash transaction where account A transfers £10000 to account B is:
+For instance, the complete business logic behind a bank transfer of £10000 from account A to B is:
 
-    UPDATE Account A DECREASE £10000;
-    UPDATE Account B INCREASE £10000;
+    UPDATE account_A DECREASE £10000;
+    UPDATE account_B INCREASE £10000;
 
-This is the most basic unit of the business, where both actions must be either **both** successful or **both** failed.
-
-### Concept of transaction
-
-A transaction is a complete business logic consists of multiple update statements on data;
-which, again, must be either **all** successful or **all** failed.
+In this most basic unit of the business, two actions must be **both** successful or **both** unsuccessful.
 
 So basically, a transaction is a batch of update statements that must be successfully executed all in once.
 
@@ -35,11 +32,13 @@ Only these 3 DML statements are in relation to transactions:
 
 ... as only these statements manipulates records in a table.
 
-Once there are DML action, the data safety must be concerned.
+Note that destructive DMLs are __not included__ here.
+They must be carefully used as their effect is not reversible under ANY situation.
 
 #### Properties of transactions: ACID
 
-Data validity during transactions is (intended to be) guaranteed by 4 properties with an acronym ACID:
+Data validity during transactions is (intended to be) guaranteed by 4 properties, with acronym ACID.
+
 | Property | Explain |
 |-|-|
 | Atomicity | Transactions are the most basic unit in business |
@@ -47,54 +46,9 @@ Data validity during transactions is (intended to be) guaranteed by 4 properties
 | Isolation | Concurrency control when multiple transactions are focusing on the same table |
 | Durability | Committed transactions must be permanent and non-volatile |
 
+Concurrency control will be explained in detail later.
+
 Transactions are sequences of operations satisfying these properties.
-
-### Concurrency control (isolation)
-
-#### Isoation levels
-
-There are 4 isolation levels, from lowest to highest:
-
-> Read uncommitted < Read committed < Repeatable read < Serialisable
-
-##### Read uncommitted
-
-At this level, transaction A is allowed to read uncommitted changes from transaction B in the same table.
-This is a *dirty read*.
-
-Virtually no table uses this level at all;
-even the most relaxed ones start from Read committed.
-
-##### Read committed
-
-At this level, transaction A can only read committed changes from transaction B;
-dirty read is not allowed.
-
-Data read in this isolation level is always correct; however the data queried by A will be subject to change
-as commited changes made by other transactions on this table will be effective immediately.
-
-##### Repeatable read
-
-When transaction A starts at this level,
-it takes snapshots for tables and carry out queries based on them;
-this "froze" the table at a certain timestamp;
-hence transaction A will always get the same query results even if other transactions make changes to the table.
-
-This remains true throughout the same transaction.
-Ending transaction A and starting a new transaction retakes new snapshots for tables.
-
-This makes data "repeatable". However the data read each time may not be an actual representation.
-
-##### Serialisable
-
-Similar to "synchronized" in java, concurrency is completely blocked at this level;
-A table of serialisable can only be queried when free of other transactions.
-
-##### Demonstrating
-
-The concurrent transactions can be demonstrated by starting multiple MySQL sessions at the same time for one table.
-
-Try this yourself; this is too verbose to put the logs here.
 
 ### Mechanism
 
@@ -138,6 +92,8 @@ At the end of transaction, finish with either `COMMIT;` or `ROLLBACK;`.
 
 Demonstrating `ROLLBACK`:
 
+<!-- @keep format -->
+
 ```sql
 mysql> SELECT * FROM `dept_bak`;
 +--------+-------+-----+
@@ -175,3 +131,51 @@ mysql> SELECT * FROM `dept_bak`;
 +--------+-------+-----+
 +--------+-------+-----+
 ```
+
+<!-- @continue format -->
+
+### Concurrency control (isolation)
+
+#### Isoation levels
+
+4 isolation levels from lowest to highest:
+
+> Read uncommitted < Read committed < Repeatable read < Serialisable
+
+##### Read uncommitted
+
+At this level, transaction A is allowed to read uncommitted changes from transaction B in the same table.
+This is a *dirty read*.
+
+Virtually no table uses this level;
+even the most relaxed ones start from Read committed.
+
+##### Read committed
+
+Here transaction A can only read committed changes from transaction B now;
+dirty read is not allowed.
+
+Data read in this isolation level is always correct; however the data queried by A will be subject to change
+as commited changes made by other transactions on this table will be effective immediately.
+
+##### Repeatable read
+
+For tables at this level, transaction A starts by taking their snapshots and carry out queries based on them;
+this "froze" the table at a certain timestamp;
+hence transaction A will always get the same query results even if other transactions make changes to the table.
+
+This remains true throughout the same transaction.
+Ending transaction A and starting a new transaction retakes new snapshots for tables.
+
+This makes queries "repeatable" but also possibly outdated at any time.
+
+##### Serialisable
+
+Similar to "synchronized" in java, concurrency is completely blocked at this level;
+A table of serialisable can only be queried/updated when free of other transactions.
+
+##### Demonstrating
+
+The concurrent transactions can be demonstrated by starting multiple MySQL sessions at the same time for one table.
+
+Try this yourself; this is too verbose to put the logs here.
