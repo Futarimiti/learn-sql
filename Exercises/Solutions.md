@@ -235,3 +235,157 @@ WHERE
     +--------+
     | 10     |
     +--------+
+
+### Find `DNAME` for the department with highest average salary
+
+Include `DNAME`.
+
+```sql
+SELECT
+	`DNAME`
+FROM
+(
+	SELECT
+		T.`DEPTNO`,
+		`DEPT`.`DNAME`
+	FROM
+	(
+		SELECT
+			AVG(`SAL`) AS 'AVG SAL',
+			`DEPTNO`
+		FROM
+			`EMP`
+		GROUP BY
+			`DEPTNO`
+		ORDER BY
+			`AVG SAL` DESC
+		LIMIT
+			1
+	) AS T
+	INNER JOIN
+		`DEPT`
+	ON
+		T.`DEPTNO` = `DEPT`.`DEPTNO`
+) AS _;
+```
+
+    +------------+
+    | DNAME      |
+    +------------+
+    | ACCOUNTING |
+    +------------+
+
+### Find `DNAME` for the department with lowest average salary
+
+Include `DNAME`.
+
+```sql
+SELECT
+	`DEPT`.`DNAME`
+FROM
+	`DEPT`
+INNER JOIN
+(
+	SELECT
+		`DEPTNO`,
+		AVG(`SAL`) AS 'AVG SAL'
+	FROM
+		`EMP`
+	GROUP BY
+		`DEPTNO`
+	ORDER BY
+		`AVG SAL` ASC
+	LIMIT
+		1
+) AS T
+ON
+	T.`DEPTNO` = `DEPT`.`DEPTNO`;
+```
+
+    +-------+
+    | DNAME |
+    +-------+
+    | SALES |
+    +-------+
+
+### Find managers whose salary is higher than the highest salary amongst employees who are not managers
+
+Include `ENAME` and `SAL` for each manager.
+
+```sql
+-- find employees that are not managers
+-- O(n^2)
+-- NOT IN subquery must not contain NULL; see https://stackoverflow.com/questions/129077/null-values-inside-not-in-clause
+SELECT
+	*
+FROM
+	`EMP`
+WHERE
+	`EMPNO` NOT IN (SELECT IFNULL(`MGR`, '') FROM `EMP`)
+
+-- find the highest sal amongst them `HISAL OF NON-MANAGERS`
+-- used `MAX` here, feel free to change to `LIMIT`
+-- O(n)
+SELECT
+	MAX(T.`SAL`) AS 'HISAL OF NON-MANAGERS'
+FROM
+(
+	SELECT
+		*
+	FROM
+		`EMP`
+	WHERE
+		`EMPNO` NOT IN (SELECT IFNULL(`MGR`, '') FROM `EMP`)
+) AS T
+
+-- find employees that are managers
+-- O(n^2)
+
+SELECT
+	*
+FROM
+	`EMP`
+WHERE
+	`EMPNO` IN (SELECT `MGR` FROM `EMP`)
+
+-- select managers with higher salary than `HISAL OF NON-MANAGERS`
+
+SELECT
+	`ENAME`,
+	`SAl`
+FROM
+(
+	SELECT
+		*
+	FROM
+		`EMP`
+	WHERE
+		`EMPNO` IN (SELECT `MGR` FROM `EMP`)
+) AS T_MANAGERS
+WHERE 
+	`SAL` > 
+	(
+		SELECT
+			MAX(T.`SAL`)
+		FROM
+		(
+			SELECT
+				*
+			FROM
+				`EMP`
+			WHERE
+				`EMPNO` NOT IN (SELECT IFNULL(`MGR`, '') FROM `EMP`)
+		) AS T
+	);
+```
+
+    +-------+--------+
+    | ENAME | SAL    |
+    +-------+--------+
+    | JONES | 2975.0 |
+    | BLAKE | 2850.0 |
+    | CLARK | 2450.0 |
+    | SCOTT | 3000.0 |
+    | KING  | 5000.0 |
+    | FORD  | 3000.0 |
+    +-------+--------+
