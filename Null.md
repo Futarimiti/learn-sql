@@ -26,7 +26,7 @@ mysql> SELECT 1 = NULL, 3 > NULL, NULL <> 10, NULL = NULL, NULL <> NULL;
 +----------+----------+------------+-------------+--------------+
 ```
 
-To check if a value is `NULL`, use postfix operater `IS NULL`.
+To check if a value is `NULL`, use postfix operator `IS NULL`.
 
 ### In math and string operations
 
