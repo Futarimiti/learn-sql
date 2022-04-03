@@ -349,6 +349,7 @@ WHERE
 	`EMPNO` IN (SELECT `MGR` FROM `EMP`)
 
 -- select managers with higher salary than `HISAL OF NON-MANAGERS`
+-- overall: O(n^2)
 
 SELECT
 	`ENAME`,
