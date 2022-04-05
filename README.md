@@ -7,6 +7,8 @@ Learning MySQL from the basics via (including while not limited to) the followin
 
 ### Note
 
+5 Apr 2022 update: this series was finished and would probably not be updated anymore.
+
 This study note is for MySQL exclusively;
 some features may not be sharing in other DBMSs especially ones with stricter syntax.
 They were sometimes mentioned in the context but of course not limited to those.
