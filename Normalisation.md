@@ -40,10 +40,9 @@ a **unique foreign key** is frequently used to connect two tables.
 
 ### The customer is always right
 
-A non-redundant table design is possible, but sometimes this may not be
-the best choice regarding to the query efficiency.
+A non-redundant table design is possible, but may not be
+the best choice in terms of query efficiency as joining becomes more frequent.
 
 In real-life develepment, always design the table
-that first satisfy customer's demand;
-sometimes we may compremise on redundancy for speed of query
-(less joining).
+satisfying customer's demand;
+compromises on redundancy for speed of query are frequent.
